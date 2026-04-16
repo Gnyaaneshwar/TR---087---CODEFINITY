@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>GraspAI — Next-Gen Robotic Grasp Planning</title>
+  <meta name="description" content="Autonomous 11-step robotic grasp planning pipeline from a single RGB-D image. Point clouds, collision detection, physics simulation."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="/static/css/style.css"/>
+</head>
+<body>
+
+<!-- ══════════════ CURSOR ══════════════ -->
+<div id="cursor-dot"></div>
+<div id="cursor-ring"></div>
+
+<!-- ══════════════ NAV ══════════════ -->
+<header class="nav" id="nav">
+  <div class="nav-inner">
+    <a class="nav-brand" href="#">
+      <div class="brand-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="3" fill="url(#g1)"/>
+          <circle cx="4"  cy="4"  r="2" fill="currentColor" opacity=".6"/>
+          <circle cx="20" cy="4"  r="2" fill="currentColor" opacity=".6"/>
+          <circle cx="4"  cy="20" r="2" fill="currentColor" opacity=".6"/>
+          <circle cx="20" cy="20" r="2" fill="currentColor" opacity=".6"/>
+          <line x1="4" y1="4" x2="12" y2="12" stroke="url(#g1)" stroke-width="1" opacity=".5"/>
+          <line x1="20" y1="4" x2="12" y2="12" stroke="url(#g1)" stroke-width="1" opacity=".5"/>
+          <line x1="4" y1="20" x2="12" y2="12" stroke="url(#g1)" stroke-width="1" opacity=".5"/>
+          <line x1="20" y1="20" x2="12" y2="12" stroke="url(#g1)" stroke-width="1" opacity=".5"/>
+          <defs>
+            <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#00e5ff"/>
+              <stop offset="100%" stop-color="#bf5af2"/>
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+      <span class="brand-name">GraspAI</span>
+      <span class="brand-tag">v2.0</span>
+    </a>
+    <nav class="nav-links">
+      <a href="#pipeline" class="nav-link">Pipeline</a>
+      <a href="#architecture" class="nav-link">Architecture</a>
+      <a href="#run" class="nav-link">Run</a>
+      <a href="#output" class="nav-link">Results</a>
+    </nav>
+    <div class="nav-right">
+      <div class="status-pill" id="nav-status">
+        <span class="status-dot idle"></span>
+        <span class="status-text">Ready</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ══════════════ HERO ══════════════ -->
+<section class="hero" id="hero">
+  <canvas id="neural-canvas"></canvas>
+
+  <div class="hero-content">
+    <div class="hero-eyebrow">
+      <span class="eyebrow-dot"></span>
+      Autonomous Robotic Grasp Planning
+      <span class="eyebrow-line"></span>
+    </div>
+
+    <h1 class="hero-headline">
+      <span class="line-1">Point Cloud.</span>
+      <span class="line-2">Collision-Free.</span>
+      <span class="line-3 gradient-text">Physics-Valid.</span>
+    </h1>
+
+    <p class="hero-desc">
+      Feed a single RGB-D image of a cluttered bin.
+      Our 11-step modular pipeline generates, filters, and ranks
+      the optimal robotic grasp candidates — in under 3 seconds.
+    </p>
+
+    <div class="hero-ctas">
+      <button class="cta-primary" onclick="document.getElementById('run').scrollIntoView({behavior:'smooth'})">
+        <span class="cta-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5,3 19,12 5,21"/></svg>
+        </span>
+        Launch Pipeline
+        <span class="cta-glow"></span>
+      </button>
+      <button class="cta-ghost" onclick="document.getElementById('architecture').scrollIntoView({behavior:'smooth'})">
+        View Architecture
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+
+    <div class="hero-metrics">
+      <div class="metric">
+        <div class="metric-num" data-count="50">0</div>
+        <div class="metric-plus">+</div>
+        <div class="metric-label">Grasp Candidates</div>
+      </div>
+      <div class="metric-sep"></div>
+      <div class="metric">
+        <div class="metric-num" data-count="11">0</div>
+        <div class="metric-label">Pipeline Modules</div>
+      </div>
+      <div class="metric-sep"></div>
+      <div class="metric">
+        <div class="metric-num" data-count="25">0</div>
+        <div class="metric-label">Unit Tests Pass</div>
+      </div>
+      <div class="metric-sep"></div>
+      <div class="metric">
+        <div class="metric-num">&lt;3</div>
+        <div class="metric-label">Seconds Runtime</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-scroll">
+    <div class="scroll-track">
+      <div class="scroll-thumb"></div>
+    </div>
+    <span>Scroll</span>
+  </div>
+</section>
+
+<!-- ══════════════ PIPELINE STEPS ══════════════ -->
+<section class="pipeline-section" id="pipeline">
+  <div class="section-label">
+    <span class="label-line"></span>
+    01 / PIPELINE
+    <span class="label-line"></span>
+  </div>
+  <h2 class="section-title">11-Step Modular Architecture</h2>
+  <p class="section-sub">Each module is independently testable, replaceable, and optimised.</p>
+
+  <div class="bento-grid" id="architecture">
+    <!-- Wide card: hero module -->
+    <div class="bento-card bento-wide bento-featured" data-step="01">
+      <div class="card-number">01</div>
+      <div class="card-badge">INPUT</div>
+      <h3>Input Validation &amp; Normalisation</h3>
+      <p>Accepts file paths or NumPy arrays. Validates identical H&times;W resolution. Fills missing depth via Euclidean distance transform (scipy). Scales RGB to [0,1] and depth via min-max normalisation.</p>
+      <div class="card-tags">
+        <span>scipy.ndimage</span><span>opencv</span><span>numpy</span>
+      </div>
+      <div class="card-gfx">
+        <svg viewBox="0 0 200 80" class="mini-chart">
+          <defs><linearGradient id="cg1" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#00e5ff" stop-opacity=".3"/><stop offset="100%" stop-color="#bf5af2" stop-opacity=".1"/></linearGradient></defs>
+          <path d="M0 60 Q25 20 50 40 T100 30 T150 45 T200 20" fill="none" stroke="#00e5ff" stroke-width="1.5" opacity=".8"/>
+          <path d="M0 60 Q25 20 50 40 T100 30 T150 45 T200 20 V80 H0Z" fill="url(#cg1)"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="bento-card" data-step="02">
+      <div class="card-number">02</div>
+      <h3>Point Cloud Generation</h3>
+      <p>Vectorised pinhole back-projection X=(u&minus;cx)Z/fx, Y=(v&minus;cy)Z/fy for every pixel. Produces coloured (N,3) float32 cloud.</p>
+      <div class="card-tags"><span>numpy</span><span>vectorised</span></div>
+    </div>
+
+    <div class="bento-card" data-step="03">
+      <div class="card-number">03</div>
+      <h3>Scene Segmentation</h3>
+      <p>Depth-threshold floor/wall removal then DBSCAN clustering isolates foreground object clusters.</p>
+      <div class="card-tags"><span>DBSCAN</span><span>scikit-learn</span></div>
+    </div>
+
+    <div class="bento-card bento-tall" data-step="04">
+      <div class="card-number">04</div>
+      <div class="card-badge accent2">CORE</div>
+      <h3>Grasp Candidate Generation</h3>
+      <p>PCA on k-NN neighbourhood estimates local surface normal per anchor. Four orthogonal roll orientations sampled per anchor. GraspNet-compatible output schema.</p>
+      <div class="card-tags"><span>PCA</span><span>KD-Tree</span><span>surface normals</span></div>
+      <div class="card-visual">
+        <div class="node-grid">
+          <div class="node" style="--d:0s"></div><div class="node" style="--d:.1s"></div>
+          <div class="node" style="--d:.2s"></div><div class="node" style="--d:.3s"></div>
+          <div class="node" style="--d:.15s"></div><div class="node" style="--d:.05s"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bento-card" data-step="05">
+      <div class="card-number">05</div>
+      <h3>Initial Scoring</h3>
+      <p>Point density, surface normal consistency, centroid proximity &mdash; three normalised heuristics combined into confidence [0,1].</p>
+      <div class="card-tags"><span>heuristic</span><span>normalised</span></div>
+    </div>
+
+    <div class="bento-card" data-step="06">
+      <div class="card-number">06</div>
+      <h3>Collision Checking</h3>
+      <p>Oriented bounding-box (OBB) model for left/right finger bodies and palm zone. KD-tree pre-filter &rarr; exact OBB test.</p>
+      <div class="card-tags"><span>OBB</span><span>KD-Tree</span><span>scipy</span></div>
+    </div>
+
+    <div class="bento-card" data-step="07">
+      <div class="card-number">07</div>
+      <h3>Stability Estimation</h3>
+      <p>Local plane fitting via SVD. Scores approach-vector alignment with surface normal and contact symmetry.</p>
+      <div class="card-tags"><span>SVD</span><span>geometry</span></div>
+    </div>
+
+    <div class="bento-card bento-wide" data-step="08">
+      <div class="card-number">08</div>
+      <div class="card-badge">RANKING</div>
+      <h3>Hybrid Re-Ranking</h3>
+      <p>Weighted fusion: <code>final_score = 0.4&times;confidence + 0.3&times;stability + 0.3&times;collision_free</code>. Top-K selected and assigned final ranks.</p>
+      <div class="formula-bar">
+        <span class="formula-chunk conf">0.4 &times; Confidence</span>
+        <span class="formula-op">+</span>
+        <span class="formula-chunk stab">0.3 &times; Stability</span>
+        <span class="formula-op">+</span>
+        <span class="formula-chunk coll">0.3 &times; Collision-Free</span>
+      </div>
+      <div class="card-tags"><span>weighted scoring</span><span>top-K</span></div>
+    </div>
+
+    <div class="bento-card" data-step="09">
+      <div class="card-number">09</div>
+      <h3>Physics Validation</h3>
+      <p>Headless PyBullet: lift test + inter-body collision check per grasp. Graceful no-op when not installed.</p>
+      <div class="card-tags"><span>PyBullet</span><span>simulation</span></div>
+    </div>
+
+    <div class="bento-card" data-step="10">
+      <div class="card-number">10</div>
+      <h3>JSON Output</h3>
+      <p>Structured export: position, orientation (r/p/y), all scores, collision status, physics result, timing metadata.</p>
+      <div class="card-tags"><span>JSON</span><span>structured</span></div>
+    </div>
+
+    <div class="bento-card" data-step="11">
+      <div class="card-number">11</div>
+      <div class="card-badge accent3">VIZ</div>
+      <h3>3D Visualization</h3>
+      <p>Open3D (with Matplotlib fallback): point cloud + gripper overlays. Green = best, yellow = valid, red = collision.</p>
+      <div class="card-tags"><span>Open3D</span><span>Matplotlib</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ RUN SECTION ══════════════ -->
+<section class="run-section" id="run">
+  <div class="section-label">
+    <span class="label-line"></span>
+    02 / RUN
+    <span class="label-line"></span>
+  </div>
+  <h2 class="section-title">Execute the Pipeline</h2>
+  <p class="section-sub">Upload RGB-D image pair or use the built-in synthetic bin scene.</p>
+
+  <div class="run-panel">
+    <!-- Upload zone -->
+    <div class="upload-area">
+      <div class="drop-pair">
+        <div class="drop-card" id="rgb-zone" tabindex="0">
+          <div class="drop-glow"></div>
+          <div class="drop-body">
+            <div class="drop-icon-wrap rgb-icon">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="2"/>
+                <path d="M21 15l-5-5L5 21"/>
+              </svg>
+            </div>
+            <div class="drop-info">
+              <div class="drop-title">RGB Image</div>
+              <div class="drop-hint">PNG / JPG &nbsp;&middot;&nbsp; H&times;W&times;3</div>
+            </div>
+            <div class="drop-btn">Browse</div>
+          </div>
+          <div class="preview-wrap" id="rgb-preview" hidden>
+            <img id="rgb-thumb" src="" alt=""/>
+            <div class="preview-label" id="rgb-name"></div>
+            <div class="preview-check">&#10003;</div>
+          </div>
+          <input type="file" id="rgb-input" accept="image/*" hidden/>
+        </div>
+
+        <div class="drop-connector">
+          <div class="connector-line"></div>
+          <div class="connector-node">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M10 3H14V10H21V14H14V21H10V14H3V10H10Z"/></svg>
+          </div>
+          <div class="connector-line"></div>
+        </div>
+
+        <div class="drop-card" id="depth-zone" tabindex="0">
+          <div class="drop-glow"></div>
+          <div class="drop-body">
+            <div class="drop-icon-wrap depth-icon">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <rect x="3" y="3" width="18" height="18" rx="3"/>
+                <rect x="7" y="7" width="3" height="10" opacity=".4"/><rect x="11" y="9" width="3" height="8" opacity=".6"/>
+                <rect x="15" y="5" width="3" height="12" opacity=".9"/>
+              </svg>
+            </div>
+            <div class="drop-info">
+              <div class="drop-title">Depth Image</div>
+              <div class="drop-hint">PNG uint16 &nbsp;&middot;&nbsp; H&times;W (mm)</div>
+            </div>
+            <div class="drop-btn">Browse</div>
+          </div>
+          <div class="preview-wrap" id="depth-preview" hidden>
+            <img id="depth-thumb" src="" alt=""/>
+            <div class="preview-label" id="depth-name"></div>
+            <div class="preview-check">&#10003;</div>
+          </div>
+          <input type="file" id="depth-input" accept="image/*" hidden/>
+        </div>
+      </div>
+
+      <div class="run-actions">
+        <button class="run-btn-primary" id="run-custom-btn" disabled>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5,3 19,12 5,21"/></svg>
+          Run with My Images
+        </button>
+        <span class="run-or">or</span>
+        <button class="run-btn-sample" id="run-sample-btn">
+          Use Sample Images
+          <span class="sample-hint">&#8212; 640&times;480 synthetic bin</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ PROGRESS ══════════════ -->
+<section class="progress-section" id="progress-section" hidden>
+  <div class="section-label">
+    <span class="label-line"></span>
+    03 / PROCESSING
+    <span class="label-line"></span>
+  </div>
+  <h2 class="section-title" id="prog-title">Pipeline Running</h2>
+
+  <!-- Step tracker -->
+  <div class="step-track" id="step-track"></div>
+
+  <!-- Terminal -->
+  <div class="terminal">
+    <div class="terminal-bar">
+      <div class="term-dots">
+        <span class="tdot red"></span>
+        <span class="tdot yellow"></span>
+        <span class="tdot green"></span>
+      </div>
+      <span class="term-title">pipeline.log &nbsp;&#8212;&nbsp; <span id="term-job-id">—</span></span>
+      <span class="term-tail" id="term-tail">● live</span>
+    </div>
+    <div class="terminal-body" id="log-body"></div>
+  </div>
+</section>
+
+<!-- ══════════════ RESULTS ══════════════ -->
+<section class="results-section" id="output" hidden>
+  <div class="section-label">
+    <span class="label-line"></span>
+    04 / OUTPUT
+    <span class="label-line"></span>
+  </div>
+  <h2 class="section-title">Grasp Analysis Complete</h2>
+  <p class="section-sub" id="results-summary"></p>
+
+  <!-- Result grid -->
+  <div class="result-grid">
+
+    <!-- Visualization -->
+    <div class="result-card vis-card">
+      <div class="rc-header">
+        <span class="rc-title">3D Scene Visualization</span>
+        <a class="rc-action" id="dl-img-btn" href="#" download="visualization.png">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download
+        </a>
+      </div>
+      <div class="vis-container">
+        <img id="vis-img" src="" alt="Grasp visualization"/>
+        <div class="vis-legend">
+          <div class="vl-item"><span class="vl-dot" style="background:#30d158"></span>Best grasp</div>
+          <div class="vl-item"><span class="vl-dot" style="background:#f5a623"></span>Valid grasps</div>
+          <div class="vl-item"><span class="vl-dot" style="background:#ff453a"></span>Collision</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Timing panel -->
+    <div class="result-card timing-card">
+      <div class="rc-header"><span class="rc-title">Step Timings</span></div>
+      <div class="timing-list" id="timing-list"></div>
+    </div>
+
+    <!-- Best grasp spotlight -->
+    <div class="result-card spotlight-card">
+      <div class="rc-header"><span class="rc-title">Best Grasp (#1)</span></div>
+      <div class="spotlight-body" id="spotlight-body">—</div>
+    </div>
+
+  </div>
+
+  <!-- Grasp table -->
+  <div class="table-card">
+    <div class="rc-header">
+      <span class="rc-title">Top 10 Ranked Grasps</span>
+      <button class="rc-action" id="dl-json-btn">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Export JSON
+      </button>
+    </div>
+    <div class="table-scroll">
+      <table class="grasp-table" id="grasp-table">
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th>X (m)</th><th>Y (m)</th><th>Z (m)</th>
+            <th>Confidence</th><th>Stability</th>
+            <th>Collision</th><th>Final Score</th><th>Physics</th>
+          </tr>
+        </thead>
+        <tbody id="grasp-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- JSON viewer -->
+  <div class="json-card">
+    <div class="rc-header">
+      <span class="rc-title">Raw JSON Payload</span>
+      <button class="rc-action toggle-json-btn" id="toggle-json">Show JSON</button>
+    </div>
+    <pre class="json-viewer" id="json-body" hidden></pre>
+  </div>
+
+  <div class="rerun-wrap">
+    <button class="cta-primary" onclick="resetUI()">
+      <span class="cta-icon">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 12a9 9 0 019-9 9 9 0 016.93 3.27"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 01-9 9 9 9 0 01-6.93-3.27"/><path d="M3 21v-5h5"/></svg>
+      </span>
+      Run Another
+      <span class="cta-glow"></span>
+    </button>
+  </div>
+</section>
+
+<!-- ══════════════ FOOTER ══════════════ -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <span class="brand-name" style="font-size:18px">GraspAI</span>
+      <span class="brand-tag">v2.0</span>
+    </div>
+    <p class="footer-copy">Autonomous Robotic Grasp Planning &mdash; 11-step modular pipeline</p>
+    <div class="tech-stack">
+      <span>Python 3.14</span><span>Flask</span><span>NumPy</span>
+      <span>SciPy</span><span>scikit-learn</span><span>Open3D</span>
+    </div>
+  </div>
+</footer>
+
+<script src="/static/js/app.js"></script>
+</body>
+</html>

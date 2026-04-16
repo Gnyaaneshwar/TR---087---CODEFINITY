@@ -1,0 +1,235 @@
+{
+  "metadata": {
+    "timestamp": "2026-04-16T21:37:53.056541",
+    "total_candidates": 50,
+    "top_k_returned": 10,
+    "scoring_weights": {
+      "confidence": 0.4,
+      "stability_score": 0.3,
+      "collision_free": 0.3
+    },
+    "timings_s": {
+      "step01_input": 0.3878,
+      "step02_pointcloud": 0.1203,
+      "step03_segmentation": 10.1708,
+      "step04_candidates": 0.0725,
+      "step05_scoring": 0.0839,
+      "step06_collision": 0.1864,
+      "step07_stability": 0.18,
+      "step08_ranking": 0.0172,
+      "step09_physics": 0.0176
+    }
+  },
+  "top_grasps": [
+    {
+      "rank": 1,
+      "position": {
+        "x": 0.06433428823947906,
+        "y": -0.0038142858538776636,
+        "z": 0.08900000154972076
+      },
+      "orientation": {
+        "roll": 0.7853981852531433,
+        "pitch": 0.26469290256500244,
+        "yaw": -2.125093460083008
+      },
+      "gripper_width": 0.03999999910593033,
+      "confidence": 0.845138334832262,
+      "stability_score": 0.9687926379911804,
+      "collision_free_score": 0.0,
+      "final_score": 0.628693125330259,
+      "collision_status": "collision",
+      "physics_validated": false,
+      "physics_score": 0.628693125330259
+    },
+    {
+      "rank": 2,
+      "position": {
+        "x": 0.06433428823947906,
+        "y": -0.0038142858538776636,
+        "z": 0.08900000154972076
+      },
+      "orientation": {
+        "roll": 1.5707963705062866,
+        "pitch": 0.26469290256500244,
+        "yaw": -2.125093460083008
+      },
+      "gripper_width": 0.03999999910593033,
+      "confidence": 0.845138334832262,
+      "stability_score": 0.7153464797846522,
+      "collision_free_score": 0.0,
+      "final_score": 0.5526592778683005,
+      "collision_status": "collision",
+      "physics_validated": false,
+      "physics_score": 0.5526592778683005
+    },
+    {
+      "rank": 3,
+      "position": {
+        "x": 0.06433428823947906,
+        "y": -0.0038142858538776636,
+        "z": 0.08900000154972076
+      },
+      "orientation": {
+        "roll": 0.0,
+        "pitch": 0.26469290256500244,
+        "yaw": -2.125093460083008
+      },
+      "gripper_width": 0.03999999910593033,
+      "confidence": 0.845138334832262,
+      "stability_score": 0.6547331888382885,
+      "collision_free_score": 0.0,
+      "final_score": 0.5344752905843914,
+      "collision_status": "collision",
+      "physics_validated": false,
+      "physics_score": 0.5344752905843914
+    },
+    {
+      "rank": 4,
+      "position": {
+        "x": -0.0851999968290329,
+        "y": -0.02295999974012375,
+        "z": 0.08399999886751175
+      },
+      "orientation": {
+        "roll": 2.356194496154785,
+        "pitch": -0.15901701152324677,
+        "yaw": -1.1238044500350952
+      },
+      "gripper_width": 0.03999999910593033,
+      "confidence": 0.02705740806770865,
+      "stability_score": 0.6605232040231664,
+      "collision_free_score": 1.0,
+      "final_score": 0.5089799244340334,
+      "collision_status": "clear",
+      "physics_validated": false,
+      "physics_score": 0.5089799244340334
+    },
+    {
+      "rank": 5,
+      "position": {
+        "x": -0.04546285420656204,
+        "y": -0.019542856141924858,
+        "z": 0.07199999690055847
+      },
+      "orientation": {
+        "roll": 1.5707963705062866,
+        "pitch": -0.7038408517837524,
+        "yaw": 0.18725602328777313
+      },
+      "gripper_width": 0.03999999910593033,
+      "confidence": 0.807585919182249,
+      "stability_score": 0.518873149726858,
+      "collision_free_score": 0.0,
+      "final_score": 0.478696312590957,
+      "collision_status": "collision",
+      "physics_validated": false,
+      "physics_score": 0.478696312590957
+    },
+    {
+      "rank": 6,
+      "position": {
+        "x": 0.021598096936941147,
+        "y": -0.0013276190729811788,
+        "z": 0.03400000184774399
+      },
+      "orientation": {
+        "roll": 2.356194496154785,
+        "pitch": -0.6383516788482666,
+        "yaw": 2.0854973793029785
+      },
+      "gripper_width": 0.03999999910593033,
+      "confidence": 0.9198834750368116,
+      "stability_score": 0.3340681577237951,
+      "collision_free_score": 0.0,
+      "final_score": 0.4681738373318632,
+      "collision_status": "collision",
+      "physics_validated": false,
+      "physics_score": 0.4681738373318632
+    },
+    {
+      "rank": 7,
+      "position": {
+        "x": -0.04546285420656204,
+        "y": -0.019542856141924858,
+        "z": 0.07199999690055847
+      },
+      "orientation": {
+        "roll": 2.356194496154785,
+        "pitch": -0.7038408517837524,
+        "yaw": 0.18725602328777313
+      },
+      "gripper_width": 0.03999999910593033,
+      "confidence": 0.807585919182249,
+      "stability_score": 0.3986865225816942,
+      "collision_free_score": 0.0,
+      "final_score": 0.44264032444740786,
+      "collision_status": "collision",
+      "physics_validated": false,
+      "physics_score": 0.44264032444740786
+    },
+    {
+      "rank": 8,
+      "position": {
+        "x": 0.021598096936941147,
+        "y": -0.0013276190729811788,
+        "z": 0.03400000184774399
+      },
+      "orientation": {
+        "roll": 1.5707963705062866,
+        "pitch": -0.6383516788482666,
+        "yaw": 2.0854973793029785
+      },
+      "gripper_width": 0.03999999910593033,
+      "confidence": 0.9198834750368116,
+      "stability_score": 0.23868797231792876,
+      "collision_free_score": 0.0,
+      "final_score": 0.4395597817101033,
+      "collision_status": "collision",
+      "physics_validated": false,
+      "physics_score": 0.4395597817101033
+    },
+    {
+      "rank": 9,
+      "position": {
+        "x": 0.021598096936941147,
+        "y": -0.0013276190729811788,
+        "z": 0.03400000184774399
+      },
+      "orientation": {
+        "roll": 0.0,
+        "pitch": -0.6383516788482666,
+        "yaw": 2.0854973793029785
+      },
+      "gripper_width": 0.03999999910593033,
+      "confidence": 0.9198834750368116,
+      "stability_score": 0.23375576164465747,
+      "collision_free_score": 0.0,
+      "final_score": 0.4380801185081219,
+      "collision_status": "collision",
+      "physics_validated": false,
+      "physics_score": 0.4380801185081219
+    },
+    {
+      "rank": 10,
+      "position": {
+        "x": -0.04546285420656204,
+        "y": -0.019542856141924858,
+        "z": 0.07199999690055847
+      },
+      "orientation": {
+        "roll": 0.7853981852531433,
+        "pitch": -0.7038408517837524,
+        "yaw": 0.18725602328777313
+      },
+      "gripper_width": 0.03999999910593033,
+      "confidence": 0.807585919182249,
+      "stability_score": 0.3351109468975513,
+      "collision_free_score": 0.0,
+      "final_score": 0.423567651742165,
+      "collision_status": "collision",
+      "physics_validated": false,
+      "physics_score": 0.423567651742165
+    }
+  ]
+}
