@@ -198,9 +198,14 @@ def _generate_samples():
 
 # ── Entry point ──────────────────────────────────────────────────────────────
 
+import os
+
 if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 10000))
+
     print("=" * 55)
-    print("  Robotic Grasp Planning Dashboard")
-    print("  http://127.0.0.1:5000")
+    print(" Robotic Grasp Planning Dashboard")
+    print(f" Running on port {port}")
     print("=" * 55)
-    app.run(debug=False, port=5000, threaded=True)
+
+    app.run(host="0.0.0.0", port=port)
